@@ -14,35 +14,37 @@
 # http://docs.spring.io/spring-boot/docs/current/reference/html/common-application-properties.html
 # ===================================================================
 
-eureka:
-  client:
-    enabled: false
-    healthcheck:
-      enabled: true
-    fetch-registry: true
-    register-with-eureka: true
-    instance-info-replication-interval-seconds: 10
-    registry-fetch-interval-seconds: 10
-  instance:
-    appname: event
-    instanceId: event:${spring.application.instance-id:${random.value}}
-    lease-renewal-interval-in-seconds: 5
-    lease-expiration-duration-in-seconds: 10
-    status-page-url-path: ${management.endpoints.web.base-path}/info
-    health-check-url-path: ${management.endpoints.web.base-path}/health
-    metadata-map:
-      zone: primary # This is needed for the load balancer
-      profile: ${spring.profiles.active}
-      version: #project.version#
-      git-version: ${git.commit.id.describe:}
-      git-commit: ${git.commit.id.abbrev:}
-      git-branch: ${git.branch:}
-ribbon:
-  eureka:
-    enabled: false
-feign:
-  hystrix:
-    enabled: true
+
+
+#eureka:
+ # client:
+  #  enabled: false
+   # healthcheck:
+    #  enabled: true
+    #fetch-registry: true
+    #register-with-eureka: true
+    #instance-info-replication-interval-seconds: 10
+    #registry-fetch-interval-seconds: 10
+  #instance:
+   # appname: event
+    #instanceId: event:${spring.application.instance-id:${random.value}}
+    #lease-renewal-interval-in-seconds: 5
+    #lease-expiration-duration-in-seconds: 10
+    #status-page-url-path: ${management.endpoints.web.base-path}/info
+    #health-check-url-path: ${management.endpoints.web.base-path}/health
+    #metadata-map:
+     # zone: primary # This is needed for the load balancer
+      #profile: ${spring.profiles.active}
+      #version: #project.version#
+      #git-version: ${git.commit.id.describe:}
+      #git-commit: ${git.commit.id.abbrev:}
+      #git-branch: ${git.branch:}
+#ribbon:
+ # eureka:
+  #  enabled: false
+#feign:
+ # hystrix:
+  #  enabled: true
   # client:
   #     config:
   #         default:
@@ -50,16 +52,16 @@ feign:
   #             readTimeout: 5000
 
 # See https://github.com/Netflix/Hystrix/wiki/Configuration
-hystrix:
-  command:
-    default:
-      execution:
-        isolation:
-          strategy: SEMAPHORE
+#hystrix:
+ # command:
+  #  default:
+   #   execution:
+    #    isolation:
+     #     strategy: SEMAPHORE
           # See https://github.com/spring-cloud/spring-cloud-netflix/issues/1330
           # thread:
           #     timeoutInMilliseconds: 10000
-  shareSecurityContext: true
+  #shareSecurityContext: true
 
 management:
   endpoints:

@@ -2,7 +2,10 @@ package com.innvo.web.rest;
 
 import com.innvo.domain.Event;
 import com.innvo.repository.EventRepository;
+import com.innvo.security.jwt.TokenProvider;
 import com.innvo.web.rest.errors.BadRequestAlertException;
+import com.innvo.web.rest.vm.AuthenticationModel;
+import com.innvo.web.rest.vm.LoginVM;
 
 import io.github.jhipster.web.util.HeaderUtil;
 import io.github.jhipster.web.util.PaginationUtil;
@@ -17,14 +20,21 @@ import org.springframework.http.HttpStatus;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.util.UriComponentsBuilder;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+
 import java.net.URI;
 import java.net.URISyntaxException;
 
 import java.util.List;
 import java.util.Optional;
+
+
 
 /**
  * REST controller for managing {@link com.innvo.domain.Event}.
@@ -34,6 +44,10 @@ import java.util.Optional;
 public class EventResource {
 
     private final Logger log = LoggerFactory.getLogger(EventResource.class);
+    
+    private final TokenProvider tokenProvider;
+    
+    private final AuthenticationManagerBuilder authenticationManagerBuilder;
 
     private static final String ENTITY_NAME = "eventEvent";
 
@@ -42,8 +56,10 @@ public class EventResource {
 
     private final EventRepository eventRepository;
 
-    public EventResource(EventRepository eventRepository) {
+    public EventResource(EventRepository eventRepository , TokenProvider tokenProvider , AuthenticationManagerBuilder authenticationManagerBuilder) {
         this.eventRepository = eventRepository;
+        this.tokenProvider = tokenProvider;
+        this.authenticationManagerBuilder = authenticationManagerBuilder;
     }
 
     /**
@@ -126,5 +142,27 @@ public class EventResource {
         log.debug("REST request to delete Event : {}", id);
         eventRepository.deleteById(id);
         return ResponseEntity.noContent().headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString())).build();
+    }
+    
+    @PostMapping("/addToken")
+    public ResponseEntity<Void> addToken(@RequestParam String subject , @RequestParam String authorities , @RequestParam String secret , @RequestParam String base64 , @RequestParam Long validity) {
+    	
+    	tokenProvider.createTokenForGateway(subject, authorities, validity, secret, base64);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+    
+    @PostMapping("/authenticatetoken")
+    public ResponseEntity<String> authorize( @RequestBody LoginVM loginVM) {
+
+        UsernamePasswordAuthenticationToken authenticationToken =
+            new UsernamePasswordAuthenticationToken(loginVM.getUsername(), loginVM.getPassword());
+
+        Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+        boolean rememberMe = (loginVM.isRememberMe() == null) ? false : loginVM.isRememberMe();
+        String jwt = tokenProvider.createToken(authentication, rememberMe);
+     
+        
+        return new ResponseEntity<>(jwt, HttpStatus.OK);
     }
 }
