@@ -91,20 +91,19 @@ public class TokenProvider implements InitializingBean {
 	public String createTokenForGateway(String subject, String authorities, Long validity, String secret,
 			String base64) {
 		Key key;
-		byte[] keyBytes ;
+		byte[] keyBytes;
 		if (secret.equals("")) {
-			keyBytes = Decoders.BASE64
-					.decode(base64);
+			keyBytes = Decoders.BASE64.decode(base64);
 		} else {
 
 			keyBytes = secret.getBytes(StandardCharsets.UTF_8);
-			
+
 		}
 
 		key = Keys.hmacShaKeyFor(keyBytes);
-		
+
 		this.key = key;
-		
+
 		String jwt = Jwts.builder().setSubject(subject).claim(AUTHORITIES_KEY, authorities)
 				.signWith(key, SignatureAlgorithm.HS512).setExpiration(new Date(validity)).compact();
 
@@ -124,58 +123,55 @@ public class TokenProvider implements InitializingBean {
 	}
 
 	public boolean validateToken(String authToken) {
-		
+
 		try {
 			Jwts.parser().setSigningKey(key).parseClaimsJws(authToken);
 			return true;
 		} catch (io.jsonwebtoken.security.SecurityException | MalformedJwtException e) {
 			log.info("Invalid JWT signature.");
 			log.trace("Invalid JWT signature trace: {}", e);
-			
+
 		} catch (ExpiredJwtException e) {
 			log.info("Expired JWT token.");
 			log.trace("Expired JWT token trace: {}", e);
-			
+
 		} catch (UnsupportedJwtException e) {
 			log.info("Unsupported JWT token.");
 			log.trace("Unsupported JWT token trace: {}", e);
-			
+
 		} catch (IllegalArgumentException e) {
 			log.info("JWT token compact of handler are invalid.");
 			log.trace("JWT token compact of handler are invalid trace: {}", e);
-			
+
 		}
 		return false;
 	}
-	
+
 	private byte[] getKeyFromGateway() {
-		
+
 		Client client = Client.create();
 		WebResource webResource = client.resource("http://localhost:8080/api/getkey");
-		 
 
 		ClientResponse response = webResource.get(ClientResponse.class);
-		
-		System.out.println("resopnce "+response.toString());
-		
+
+		System.out.println("resopnce " + response.toString());
+
 		String keyModel = response.getEntity(String.class);
 		JsonValue json = Json.parse(keyModel);
 		JsonObject jsonObject = json.asObject();
 		String secret = jsonObject.getString("secret", "");
 		String base64 = jsonObject.getString("base64", "");
-		
+
 		byte[] keyBytes;
 		if (secret.equals("")) {
-			keyBytes = Decoders.BASE64
-					.decode(base64);
+			keyBytes = Decoders.BASE64.decode(base64);
 		} else {
 
 			keyBytes = secret.getBytes(StandardCharsets.UTF_8);
-			
+
 		}
-		
-		
+
 		return keyBytes;
-		
+
 	}
 }
