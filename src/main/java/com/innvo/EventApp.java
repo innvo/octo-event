@@ -23,7 +23,7 @@ import java.util.Collection;
 
 @SpringBootApplication
 @EnableConfigurationProperties({LiquibaseProperties.class, ApplicationProperties.class})
-@EnableDiscoveryClient
+//@EnableDiscoveryClient
 public class EventApp implements InitializingBean {
 
     private static final Logger log = LoggerFactory.getLogger(EventApp.class);

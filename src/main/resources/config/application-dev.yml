@@ -19,12 +19,12 @@ logging:
     io.github.jhipster: DEBUG
     com.innvo: DEBUG
 
-eureka:
-  instance:
-    prefer-ip-address: true
-  client:
-    service-url:
-      defaultZone: http://admin:${jhipster.registry.password}@localhost:8761/eureka/
+#eureka:
+ # instance:
+  #  prefer-ip-address: true
+  #client:
+   # service-url:
+    #  defaultZone: http://admin:${jhipster.registry.password}@localhost:8761/eureka/
 
 spring:
   profiles:
@@ -44,9 +44,9 @@ spring:
       indent-output: true
   datasource:
     type: com.zaxxer.hikari.HikariDataSource
-    url: jdbc:h2:mem:event;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
-    username: event
-    password:
+    url: jdbc:postgresql://localhost:5432/test3
+    username: postgres
+    password: postgres
     hikari:
       poolName: Hikari
       auto-commit: false
