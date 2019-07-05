@@ -58,17 +58,17 @@ public class EventResourceIT {
 
     private Event event;
 
-    @BeforeEach
-    public void setup() {
-        MockitoAnnotations.initMocks(this);
-        final EventResource eventResource = new EventResource(eventRepository);
-        this.restEventMockMvc = MockMvcBuilders.standaloneSetup(eventResource)
-            .setCustomArgumentResolvers(pageableArgumentResolver)
-            .setControllerAdvice(exceptionTranslator)
-            .setConversionService(createFormattingConversionService())
-            .setMessageConverters(jacksonMessageConverter)
-            .setValidator(validator).build();
-    }
+//    @BeforeEach
+//    public void setup() {
+//        MockitoAnnotations.initMocks(this);
+//        final EventResource eventResource = new EventResource(eventRepository);
+//        this.restEventMockMvc = MockMvcBuilders.standaloneSetup(eventResource)
+//            .setCustomArgumentResolvers(pageableArgumentResolver)
+//            .setControllerAdvice(exceptionTranslator)
+//            .setConversionService(createFormattingConversionService())
+//            .setMessageConverters(jacksonMessageConverter)
+//            .setValidator(validator).build();
+//    }
 
     /**
      * Create an entity for this test.
